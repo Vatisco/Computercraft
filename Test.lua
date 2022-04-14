@@ -14,7 +14,12 @@ z_pos = 0
 -- orientation (0 = N, 1 = E, 2 = S, 3 = W (Relative from beginning pos))
 orientation = 0
 
-function GoToPos(x,y,z)
+function GoToPos(targetx,targety,targetz)
+    while not GoToPosStep(targetx, targety, targetz) do
+    end
+end
+
+function GoToPosStep(targetx, targety, targetz)
 
 end
 
@@ -23,16 +28,68 @@ function Refuelling()
 end
 
 function EmptyInventory()
-    
+    GoToPos(0,0,0)
+    local hasfuel = false
+    while not orientation == 2 do
+        TurnLeft()
+    end
+    for i=0,16 do
+        select(i)
+        if Isfuel() and not hasfuel then
+            hasfuel = true
+        elseif not Isfuel then
+            turtle.drop()
+        end
+    end
+
 end
 
-function Excavate()
+function Isfuel()
+    local is_fuel = turtle.refuel(0)
+    return is_fuel
+end
 
+function Excavate(x, z)
+
+end
+
+function PickupDown()
+    local Pickup = turtle.suckDown()
+    if not Pickup then
+        EmptyInventory()
+    end
+end
+
+function Pickup()
+    local Pickup = turtle.suck()
+    if not Pickup then
+        EmptyInventory()
+    end
+end
+function TurnLeft()
+    turtle.turnLeft()
+    if orientation == 0 then
+    orientation = 3
+    elseif orientation > 0 and orientation < 4 then
+        orientation = orientation - 1
+    end
+
+end
+
+function TurnRight()
+    turtle.turnRight()
+    if orientation == 3 then
+        orientation = 0
+    elseif orientation >= 0 and orientation < 4 then
+        orientation = orientation + 1
+    end
 end
 
 function MoveDown()
-    turtle.digDown()
-    turtle.suckDown()
+    if turtle.detectDown then
+        turtle.digDown()
+        PickupDown()
+    end
     m = turtle.down
     if m then 
         y_pos = y_pos -1
@@ -59,7 +116,7 @@ function main()
     while TargetStartY <= y_pos do
         MoveDown()
     end
-    Excavate()
+    Excavate(z, x)
 end
 
 main()
