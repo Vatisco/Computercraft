@@ -8,15 +8,15 @@
 
 --Going back to storage - Need to go to 0,0 before going up
 
-x_pos = 0  -- +Forward and -back
-y_pos = 0  -- +Up and -down
-z_pos = 0  -- -Left(west) and +right(east)
-saved_x_pos = 0
-saved_y_pos = 0
-saved_z_pos = 0
+local x_pos = 0  -- +Forward and -back
+local y_pos = 0  -- +Up and -down
+local z_pos = 0  -- -Left(west) and +right(east)
+local saved_x_pos = 0
+local saved_y_pos = 0
+local saved_z_pos = 0
 -- orientation (0 = N, 1 = E, 2 = S, 3 = W (Relative from beginning pos))
-orientation = 0
-saved_orientation = 0
+local orientation = 0
+local saved_orientation = 0
 
 
 function Orientate(Direction)
