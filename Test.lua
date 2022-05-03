@@ -60,8 +60,11 @@ function GoToPos(targetx,targety,targetz)
 end
 
 function GoToPosStep(targetx, targety, targetz)
-    -- needs to move north
-    if targetx > x_pos then
+    if targety < y_pos then
+        -- needs to move down
+        MoveDown()
+    elseif targetx > x_pos then
+        -- needs to move north
         Orientate(0)
         MoveForward()
     elseif targetx < x_pos then
@@ -79,8 +82,6 @@ function GoToPosStep(targetx, targety, targetz)
     elseif targety > y_pos then
         -- needs to move up
         MoveUp()
-    elseif targety < y_pos then
-        MoveDown()
     elseif targetx == x_pos and targety == y_pos and targetz == z_pos then
         return true
     else
@@ -92,6 +93,10 @@ function Refuelling()
     local fuellevel = turtle.getFuelLevel()
     if fuellevel >= 5000 then
         local level = turtle.getFuelLevel()
+        while not Isfuel do
+            local a = turtle.getSelectedSlot() + 1
+            turtle.select(a)
+        end
         local ok, err = turtle.refuel()
         if ok then
             local new_level = turtle.getFuelLevel()
@@ -128,13 +133,52 @@ function Isfuel()
 end
 
 function Excavate(x, z)
-    Mineable = false
+    Mineable = true
+    local layerprogress = 0
+    MoveDown()
+    Orientate(0)
     while Mineable == true do
-        MoveDown()
-        Orientate(0)
-        for i=0,x do
-            MoveForward()
+        while not layerprogress == z do
+            Line(x)
+            layerprogress = layerprogress + 1
+            while not layerprogress == z do
+                Orientate(1)
+                MoveForward()
+                if layerprogress % 2 == 0 then
+                    Orientate(0)
+                elseif layerprogress % 2 == 1 then
+                    Orientate(2)
+                end
+                Line(x)
+                layerprogress = layerprogress + 1
+            end
         end
+        if layerprogress == z then
+            MoveDown()
+            Orientate(2)
+            layerprogress = 0
+        end
+        while not layerprogress == z do
+            Line(x)
+            while not layerprogress == z do
+                Orientate(3)
+                MoveForward()
+                if layerprogress % 2 == 0 then
+                    Orientate(0)
+                elseif layerprogress % 2 == 1 then
+                    Orientate(2)
+                end
+                Line(x)
+            end
+        end
+    end
+end
+
+function Line(x)
+    local o = 0
+    while o < x do
+        MoveForward()
+        o = o + 1
     end
 end
 
